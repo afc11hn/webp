@@ -81,7 +81,7 @@ impl<'a> Decoder<'a> {
 pub struct BitstreamFeatures(WebPBitstreamFeatures);
 
 impl BitstreamFeatures {
-    pub fn new(data: &[u8]) -> Option<Self> {
+    fn new(data: &[u8]) -> Option<Self> {
         unsafe {
             let mut features: WebPBitstreamFeatures = std::mem::zeroed();
 
@@ -168,7 +168,10 @@ impl Debug for BitstreamFeatures {
 #[derive(Debug)]
 /// The format of the image bitstream which is either lossy, lossless or something else.
 pub enum BitstreamFormat {
+    /// Undefined or Mixed
     Undefined = 0,
+    /// Lossy encoding
     Lossy = 1,
+    /// Lossless encoding
     Lossless = 2,
 }

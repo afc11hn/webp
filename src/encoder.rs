@@ -4,7 +4,9 @@ use libwebp_sys::*;
 
 use crate::shared::*;
 
-/// An encoder for WebP images. It uses the default configuration of libwebp.
+/// An encoder for WebP images. It converts an uncompressed image into the WebP format.
+/// The image data can be in any
+/// It uses the default configuration of libwebp.
 pub struct Encoder<'a> {
     image: &'a [u8],
     layout: PixelLayout,
@@ -46,13 +48,15 @@ impl<'a> Encoder<'a> {
         Self { image, layout: PixelLayout::Rgba, width, height }
     }
 
-    /// Emcode the image with the given quality.
+    /// Encode the image with the given quality.
+    /// The returned [WebPMemory](../shared/struct.WebPMemory.html) represents memory which is owned by libwebp
+    /// and can be safely accessed through the Deref and DerefMut traits.
     /// The image quality must be between 0.0 and 100.0 inclusive for minimal and maximal quality respectively.
     pub fn encode(&self, quality: f32) -> WebPMemory {
         unsafe { encode(self.image, self.layout, self.width, self.height, quality) }
     }
 
-    /// Emcode the image losslessly.
+    /// Encode the image losslessly.
     pub fn encode_lossless(&self) -> WebPMemory {
         unsafe { encode(self.image, self.layout, self.width, self.height, -1.0) }
     }

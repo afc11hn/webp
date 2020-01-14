@@ -7,6 +7,10 @@ use libwebp_sys::WebPFree;
 
 /// This struct represents a safe wrapper around memory owned by libwebp.
 /// Its data contents can be accessed through the Deref and DerefMut traits.
+///
+/// # Safety
+/// The memory is freed by libweb when dropped. This means it is safe to access the data while this
+/// struct is borrowed (through Deref and DerefMut).
 pub struct WebPMemory(pub(crate) *mut u8, pub(crate) usize);
 
 impl Debug for WebPMemory {
@@ -40,6 +44,7 @@ impl DerefMut for WebPMemory {
 /// This struct represents a decoded image.
 /// Its data contents can be accessed through the Deref and DerefMut traits.
 /// It is also possible to create an image::DynamicImage from this struct.
+#[derive(Debug)]
 pub struct WebPImage {
     data: WebPMemory,
     layout: PixelLayout,
@@ -100,9 +105,14 @@ impl DerefMut for WebPImage {
 }
 
 /// Describes the pixel layout (the order of the color channels) of an image.
+/// It is used to specify the pixel layout of a [WebPImage](../shared/struct.WebPImage.html).
+/// This is very similar to the ColorType enum from the image crate in that used
+/// to specify the order of the color channels or whether an alpha channel exists.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum PixelLayout {
+    /// A pixel with this layout contains a red, green and blue channel in this order.
     Rgb,
+    /// A pixel with this layout contains a red, green, blue and alpha channel in this order.
     Rgba,
 }
 

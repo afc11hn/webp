@@ -2,6 +2,7 @@
 //! It is implemented as a safe wrapper around the libwebp-sys crate.
 //! Currently only a subset of the features supported by libwebp are available.
 //! The simple encoding and decoding apis are implemented which use the default configuration of libwebp.
+#[deny(missing_docs)]
 
 mod decoder;
 #[doc(inline)]
