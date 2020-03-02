@@ -52,17 +52,17 @@ impl<'a> Encoder<'a> {
     /// The returned [WebPMemory](../shared/struct.WebPMemory.html) represents memory which is owned by libwebp
     /// and can be safely accessed through the Deref and DerefMut traits.
     /// The image quality must be between 0.0 and 100.0 inclusive for minimal and maximal quality respectively.
-    pub fn encode(&self, quality: f32) -> WebPMemory {
+    pub fn encode(&self, quality: f32) -> Option<WebPMemory> {
         unsafe { encode(self.image, self.layout, self.width, self.height, quality) }
     }
 
     /// Encode the image losslessly.
-    pub fn encode_lossless(&self) -> WebPMemory {
+    pub fn encode_lossless(&self) -> Option<WebPMemory> {
         unsafe { encode(self.image, self.layout, self.width, self.height, -1.0) }
     }
 }
 
-unsafe fn encode(image: &[u8], color: PixelLayout, width: u32, height: u32, quality: f32) -> WebPMemory {
+unsafe fn encode(image: &[u8], color: PixelLayout, width: u32, height: u32, quality: f32) -> Option<WebPMemory> {
     let width = width as _;
     let height = height as _;
 
@@ -87,5 +87,9 @@ unsafe fn encode(image: &[u8], color: PixelLayout, width: u32, height: u32, qual
         }
     };
 
-    WebPMemory(buffer, len)
+    if len == 0 {
+        None
+    }else {
+        Some(WebPMemory(buffer, len))
+    }
 }

@@ -16,7 +16,7 @@ fn main() {
         let webp_image = webp_decoder.encode(100.0);
 
         File::create(new_filename(&filename)).unwrap()
-            .write(webp_image.deref()).unwrap();
+            .write(webp_image.unwrap().deref()).unwrap();
     }
 }
 
