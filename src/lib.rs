@@ -3,7 +3,6 @@
 //! Currently only a subset of the features supported by libwebp are available.
 //! The simple encoding and decoding apis are implemented which use the default configuration of libwebp.
 #[deny(missing_docs)]
-
 mod decoder;
 #[doc(inline)]
 pub use decoder::*;
@@ -75,14 +74,21 @@ mod tests {
         let test_image_no_alpha = generate_color_wheel(SIZE, SIZE, false);
         let encoded = Encoder::from_image(&test_image_no_alpha).encode_lossless();
 
-        let decoded = Decoder::new(encoded.deref()).decode().unwrap().as_image().to_rgb();
+        let decoded = Decoder::new(encoded.deref())
+            .decode()
+            .unwrap()
+            .as_image()
+            .to_rgb();
         assert_eq!(test_image_no_alpha.to_rgb().deref(), decoded.deref());
-
 
         let test_image_alpha = generate_color_wheel(SIZE, SIZE, true);
         let encoded = Encoder::from_image(&test_image_alpha).encode_lossless();
 
-        let decoded = Decoder::new(encoded.deref()).decode().unwrap().as_image().to_rgba();
+        let decoded = Decoder::new(encoded.deref())
+            .decode()
+            .unwrap()
+            .as_image()
+            .to_rgba();
 
         // To achieve better compression, the webp library changes the rgb values in transparent regions
         // This means we have to exclusively compare the opaque regions
@@ -91,7 +97,8 @@ mod tests {
             // two pixels are equal if they are fully transparent
             if p1.channels()[3] == 0 && p2.channels()[3] == 0 {
                 true
-            } else { // or if they otherwise equal
+            } else {
+                // or if they otherwise equal
                 p1 == p2
             }
         }
@@ -111,7 +118,6 @@ mod tests {
         assert_eq!(features.height(), SIZE);
         assert!(!features.has_alpha());
         assert!(!features.has_animation());
-
 
         let test_image_alpha = generate_color_wheel(SIZE, SIZE, true);
         let encoded = Encoder::from_image(&test_image_alpha).encode_lossless();

@@ -56,21 +56,11 @@ impl<'a> Decoder<'a> {
         let image = if features.has_alpha() {
             let len = 4 * pixel_count as usize;
 
-            WebPImage::new(
-                WebPMemory(image_ptr, len),
-                PixelLayout::Rgba,
-                width,
-                height,
-            )
+            WebPImage::new(WebPMemory(image_ptr, len), PixelLayout::Rgba, width, height)
         } else {
             let len = 3 * pixel_count as usize;
 
-            WebPImage::new(
-                WebPMemory(image_ptr, len),
-                PixelLayout::Rgb,
-                width,
-                height,
-            )
+            WebPImage::new(WebPMemory(image_ptr, len), PixelLayout::Rgb, width, height)
         };
 
         Some(image)
@@ -90,20 +80,12 @@ impl BitstreamFeatures {
             unsafe fn WebPGetFeatures(
                 data: *const u8,
                 data_size: usize,
-                features: *mut WebPBitstreamFeatures) -> VP8StatusCode {
-                WebPGetFeaturesInternal(
-                    data,
-                    data_size,
-                    features,
-                    WEBP_DECODER_ABI_VERSION as i32,
-                )
+                features: *mut WebPBitstreamFeatures,
+            ) -> VP8StatusCode {
+                WebPGetFeaturesInternal(data, data_size, features, WEBP_DECODER_ABI_VERSION as i32)
             }
 
-            let result = WebPGetFeatures(
-                data.as_ptr(),
-                data.len(),
-                &mut features as *mut _,
-            );
+            let result = WebPGetFeatures(data.as_ptr(), data.len(), &mut features as *mut _);
 
             if result == VP8StatusCode::VP8_STATUS_OK {
                 return Some(Self(features));

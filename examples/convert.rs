@@ -3,20 +3,25 @@ use std::env;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::ops::Deref;
-use webp::Encoder;
 use std::path::PathBuf;
+use webp::Encoder;
 
 fn main() {
     for filename in env::args().skip(1) {
         let mut data = vec![];
-        File::open(&filename).unwrap().read_to_end(&mut data).unwrap();
+        File::open(&filename)
+            .unwrap()
+            .read_to_end(&mut data)
+            .unwrap();
 
         let image = image::load_from_memory(&data).unwrap();
         let webp_decoder = Encoder::from_image(&image);
         let webp_image = webp_decoder.encode(100.0);
 
-        File::create(new_filename(&filename)).unwrap()
-            .write(webp_image.unwrap().deref()).unwrap();
+        File::create(new_filename(&filename))
+            .unwrap()
+            .write(webp_image.unwrap().deref())
+            .unwrap();
     }
 }
 
