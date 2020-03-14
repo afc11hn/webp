@@ -3,6 +3,7 @@
 //! Currently only a subset of the features supported by libwebp are available.
 //! The simple encoding and decoding apis are implemented which use the default configuration of libwebp.
 #[deny(missing_docs)]
+
 mod decoder;
 #[doc(inline)]
 pub use decoder::*;
@@ -72,19 +73,19 @@ mod tests {
     #[test]
     fn encode_decode() {
         let test_image_no_alpha = generate_color_wheel(SIZE, SIZE, false);
-        let encoded = Encoder::from_image(&test_image_no_alpha).encode_lossless();
+        let encoded = Encoder::from_image(&test_image_no_alpha)
+            .encode_lossless()
+            .unwrap();
 
-        let decoded = Decoder::new(encoded.deref())
-            .decode()
-            .unwrap()
-            .as_image()
-            .to_rgb();
+        let decoded = Decoder::new(&encoded).decode().unwrap().as_image().to_rgb();
         assert_eq!(test_image_no_alpha.to_rgb().deref(), decoded.deref());
 
         let test_image_alpha = generate_color_wheel(SIZE, SIZE, true);
-        let encoded = Encoder::from_image(&test_image_alpha).encode_lossless();
+        let encoded = Encoder::from_image(&test_image_alpha)
+            .encode_lossless()
+            .unwrap();
 
-        let decoded = Decoder::new(encoded.deref())
+        let decoded = Decoder::new(&encoded)
             .decode()
             .unwrap()
             .as_image()
@@ -111,18 +112,22 @@ mod tests {
     #[test]
     fn get_info() {
         let test_image_no_alpha = generate_color_wheel(SIZE, SIZE, false);
-        let encoded = Encoder::from_image(&test_image_no_alpha).encode_lossless();
+        let encoded = Encoder::from_image(&test_image_no_alpha)
+            .encode_lossless()
+            .unwrap();
 
-        let features = BitstreamFeatures::new(encoded.deref()).unwrap();
+        let features = Decoder::new(&encoded).features().unwrap();
         assert_eq!(features.width(), SIZE);
         assert_eq!(features.height(), SIZE);
         assert!(!features.has_alpha());
         assert!(!features.has_animation());
 
         let test_image_alpha = generate_color_wheel(SIZE, SIZE, true);
-        let encoded = Encoder::from_image(&test_image_alpha).encode_lossless();
+        let encoded = Encoder::from_image(&test_image_alpha)
+            .encode_lossless()
+            .unwrap();
 
-        let features = BitstreamFeatures::new(encoded.deref()).unwrap();
+        let features = Decoder::new(&encoded).features().unwrap();
         assert_eq!(features.width(), SIZE);
         assert_eq!(features.height(), SIZE);
         assert!(features.has_alpha());

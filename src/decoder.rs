@@ -16,9 +16,14 @@ impl<'a> Decoder<'a> {
         Self { data }
     }
 
+    /// Gather information about the input image.
+    pub fn features(&self) -> Option<BitstreamFeatures> {
+        BitstreamFeatures::new(self.data)
+    }
+
     /// Decodes the image data. If the image contains a valid WebP image, a [WebPImage](../shared/struct.WebPImage.html) is returned.
     pub fn decode(&self) -> Option<WebPImage> {
-        let features = BitstreamFeatures::new(self.data)?;
+        let features = self.features()?;
 
         if features.has_animation() {
             return None;
